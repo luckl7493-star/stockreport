@@ -1,174 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Stock Audit - Mehar Munir Brother</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<title>Stock Entry – Wazirabad</title>
 <style>
-:root{--bg:#fff;--panel:#F4F8F8;--line:#D5E0E1;--ink:#14181A;--muted:#68716C;--a:#0E7C86;--bad:#C62828;--badbg:#FBE3E3;--ok:#1B7A3E;--okbg:#E3F1E8;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181B;--panel:#1D2426;--line:#2C373A;--ink:#F1F4F6;--muted:#9AA5AD;--a:#3FB6C1;--badbg:#4A2323;--okbg:#1E3A2A;--bad:#FF8A80;--ok:#7BD99A;}}
-:root[data-theme="dark"]{--bg:#14181B;--panel:#1D2426;--line:#2C373A;--ink:#F1F4F6;--muted:#9AA5AD;--a:#3FB6C1;--badbg:#4A2323;--okbg:#1E3A2A;--bad:#FF8A80;--ok:#7BD99A;}
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mut:#667085;--bd:#e3e6eb;--pri:#0b6bcb;--pt:#fff;--ok:#12805c;--bad:#c62828;--lock:#eef0f3;--key:#eef1f5;--op:#dfe7f3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1318;--card:#181d24;--tx:#e8eaed;--mut:#9aa4b2;--bd:#2a313b;--pri:#4c9aff;--pt:#08121f;--ok:#46c28f;--bad:#ff7b72;--lock:#202733;--key:#222a35;--op:#2b3646;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1318;--card:#181d24;--tx:#e8eaed;--mut:#9aa4b2;--bd:#2a313b;--pri:#4c9aff;--pt:#08121f;--ok:#46c28f;--bad:#ff7b72;--lock:#202733;--key:#222a35;--op:#2b3646;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,-apple-system,Segoe UI,Arial,sans-serif}
-header{background:linear-gradient(90deg,#04343A,#0E7C86);color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-header h1{margin:0;font-size:17px}header p{margin:2px 0 0;font-size:11px;opacity:.88}
-.wrap{max-width:720px;margin:0 auto;padding:10px}
-.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-select,input[type=search]{flex:1 1 140px;min-width:0;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
-.btn{border:none;border-radius:10px;padding:11px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--a);color:#fff}
-.btn.alt{background:var(--bg);color:var(--a);border:1px solid var(--a)}
-.btn.w{background:#fff;color:#04343A}
-#st{font-size:12px;color:#fff;opacity:.95}
-.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
-.sum div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:7px;font-size:11px;color:var(--muted);text-align:center}
-.sum b{display:block;font-size:16px;color:var(--ink);font-family:ui-monospace,Menlo,monospace}
-.hd,.r{display:grid;grid-template-columns:1fr 62px 96px 66px;gap:8px;align-items:center;padding:9px 8px}
-.hd{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;border-bottom:2px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:2}
-.r{border-bottom:1px solid var(--line);cursor:pointer}
-.r.sel{background:var(--panel);outline:2px solid var(--a);outline-offset:-2px;border-radius:8px}
-.nm{font-weight:700;font-size:14px;line-height:1.25}.mt{font-size:10.5px;color:var(--muted);margin-top:2px}
-.sy,.df{font-family:ui-monospace,Menlo,monospace;font-weight:700;text-align:center}
-.sy{font-size:15px}
-.ph{width:100%;padding:9px 6px;font-size:18px;font-weight:700;font-family:ui-monospace,Menlo,monospace;border:2px solid var(--a);border-radius:10px;background:var(--bg);color:var(--ink);text-align:center}
-.ph.z{color:var(--muted);border-color:var(--line)}
-.df{font-size:15px;border-radius:8px;padding:6px 2px}
-.df.ok{background:var(--okbg);color:var(--ok)}.df.bad{background:var(--badbg);color:var(--bad)}
-#list{padding-bottom:420px}
-.fab{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;font-size:26px;border:none;background:var(--a);color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.3);z-index:30;cursor:pointer}
-.calc{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--bg);border-top:2px solid var(--a);box-shadow:0 -6px 18px rgba(0,0,0,.2);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))}
-.ci{max-width:520px;margin:0 auto}
-.ch{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.ch b{font-size:13px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ch button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer}
-.disp{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;margin:6px 0;text-align:right}
-.ex{font-size:22px;font-weight:700;font-family:ui-monospace,Menlo,monospace;min-height:28px;word-break:break-all}
-.rv{font-size:12px;color:var(--muted);min-height:16px}
-.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.kp button{padding:11px 0;font-size:19px;font-weight:700;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);cursor:pointer}
-.kp .op{background:var(--a);color:#fff;border-color:var(--a)}.kp .fn{color:var(--bad)}
-.acts{display:grid;grid-template-columns:1.2fr 1.4fr 1fr 1fr;gap:6px;margin-top:6px}
-.acts button{padding:11px 4px;font-size:13px;font-weight:700;border-radius:10px;border:none;background:var(--a);color:#fff;cursor:pointer}
-.acts .alt{background:var(--bg);color:var(--a);border:1px solid var(--a)}
-.hid{display:none}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,"Noto Sans Devanagari",Roboto,sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:12px 12px 90px}
+h1{font-size:18px;margin:4px 0 0}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.chip{font-size:12px;padding:3px 9px;border-radius:99px;background:var(--lock);color:var(--mut);white-space:nowrap}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-top:12px}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+label:first-child{margin-top:0}
+select,input[type=search]{width:100%;font:inherit;padding:10px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sel{margin-top:10px;padding:8px 10px;border-radius:10px;background:var(--lock);font-weight:600;min-height:38px}
+.disp{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:8px 12px;text-align:right;min-height:64px}
+.disp .e{font-size:20px;word-break:break-all;min-height:26px}
+.disp .r{font-size:13px;color:var(--mut)}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}
+.keys button{font:inherit;font-size:20px;padding:13px 0;border:0;border-radius:10px;background:var(--key);color:var(--tx)}
+.keys button.o{background:var(--op)}
+.keys button.eq{background:var(--pri);color:var(--pt)}
+.keys .w2{grid-column:span 2}
+.adds{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.adds button{font:inherit;font-weight:600;padding:12px 6px;border:0;border-radius:10px;background:var(--pri);color:var(--pt)}
+button:disabled{opacity:.4}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.col{border:1px solid var(--bd);border-radius:12px;padding:8px;background:var(--lock);text-align:center}
+.col .t{font-size:12px;color:var(--mut)}
+.col .v{font-size:20px;font-weight:700;margin:4px 0;word-break:break-all}
+.col input{width:100%;border:0;background:transparent;font:inherit;font-size:20px;font-weight:700;text-align:center;color:inherit;padding:2px 0;pointer-events:none}
+.col small{display:block;font-size:11px;color:var(--mut)}
+.col button{font:inherit;font-size:12px;margin-top:4px;padding:4px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+.log{font-size:12px;color:var(--mut);margin-top:8px;word-break:break-word}
+.z{color:var(--ok)}.nz{color:var(--bad)}
+details{margin-top:12px}
+summary{cursor:pointer;font-weight:600;padding:6px 0}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:6px 5px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;white-space:normal}
+tr.cl{cursor:pointer}tr.on td{background:var(--lock)}
+tfoot td{font-weight:700}
+.bar{position:sticky;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--bd);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));display:flex;gap:10px;align-items:center;justify-content:space-between;margin:0 -12px}
+.bar span{font-size:13px;color:var(--mut)}
+.bar button{font:inherit;font-weight:700;padding:11px 20px;border:0;border-radius:10px;background:var(--ok);color:#fff}
+.bar.d span{color:var(--bad)}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;padding:8px 14px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90%;text-align:center;z-index:9}
+#toast.s{opacity:1}
+.xl{width:100%;margin-top:12px;font:inherit;font-weight:600;padding:12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}
+.card{box-shadow:0 1px 4px rgba(0,0,0,.07)}h1{font-size:20px}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.k{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 4px;text-align:center}
+.k span{display:block;font-size:11px;color:var(--mut)}.k b{font-size:15px;word-break:break-all}
+.pg{grid-column:1/-1;height:8px;border-radius:99px;background:var(--lock);overflow:hidden}.pg i{display:block;height:100%;background:var(--pri);transition:width .3s}
+.pt{grid-column:1/-1;font-size:12px;color:var(--mut)}
+.pn{display:flex;gap:8px;align-items:center;margin-top:8px}.pn button{font:inherit;padding:8px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}.pn label{margin:0 0 0 auto;display:flex;gap:5px;align-items:center;font-size:12px}
+.chips{display:flex;gap:6px;margin:6px 0;flex-wrap:wrap}.chips button{font:inherit;font-size:12px;padding:5px 11px;border:1px solid var(--bd);border-radius:99px;background:var(--card);color:var(--tx)}.chips button.on{background:var(--pri);color:var(--pt);border-color:var(--pri)}
+.keys button:active,.adds button:active{transform:scale(.97)}
+.en{font:inherit;font-size:13px;margin:2px 4px 2px 0;padding:4px 10px;border:1px solid var(--bd);border-radius:99px;background:var(--card);color:var(--tx)}.hint{margin-top:6px;font-style:italic}
 </style>
 </head>
 <body>
-<header>
-  <div><h1>📦 Stock Audit</h1><p>Mehar Munir Brother · Wazirabad</p></div>
-  <div><span id="st"></span> <button class="btn w" id="sv">💾 Save</button></div>
-</header>
 <div class="wrap">
-  <div class="row"><select id="fp"></select><select id="fc"></select></div>
-  <div class="row"><input type="search" id="q" placeholder="Search product…"></div>
-  <div class="sum" id="sum"></div>
-  <div class="row"><button class="btn" id="dx">⬇ Download Excel</button><button class="btn alt" id="rs">Reset all to 0</button></div>
-  <div class="hd"><div>Product</div><div style="text-align:center">System</div><div style="text-align:center">Physical</div><div style="text-align:center">Diff</div></div>
-  <div id="list"></div>
+ <div class="top"><h1>📦 Stock Entry</h1><span class="chip" id="st">…</span></div>
+ <div class="kpi" id="kpi"></div>
+
+ <div class="card">
+  <label for="dist">Distributor</label>
+  <select id="dist"></select>
+  <label for="q">Search product</label>
+  <input type="search" id="q" placeholder="Type name, brand or pack…" autocomplete="off">
+  <div class="row2">
+   <div><label for="pack">Pack</label><select id="pack"></select></div>
+   <div><label for="brand">Brand</label><select id="brand"></select></div>
+  </div>
+  <label for="prod">Select product</label>
+  <select id="prod"></select>
+  <div class="sel" id="selname">No product selected</div>
+  <div class="pn"><button id="pv">‹ Prev</button><button id="nx">Next ›</button><label><input type="checkbox" id="auto"> Auto-next after Physical</label></div>
+ </div>
+
+ <div class="card">
+  <div class="disp"><div class="e" id="ex">0</div><div class="r" id="rs"></div></div>
+  <div class="keys" id="keys"></div>
+  <div class="adds">
+   <button id="addS">Add to System</button>
+   <button id="addP">Add to Physical</button>
+  </div>
+ </div>
+
+ <div class="card">
+  <div class="cols">
+   <div class="col"><div class="t">🔒 System</div><input id="vS" readonly tabindex="-1" value="0"><small id="nS"></small><button id="uS">↩ Undo last</button></div>
+   <div class="col"><div class="t">🔒 Physical</div><input id="vP" readonly tabindex="-1" value="0"><small id="nP"></small><button id="uP">↩ Undo last</button></div>
+   <div class="col"><div class="t">🔒 Difference</div><input id="vD" readonly tabindex="-1" value="0"><small>System − Physical</small></div>
+  </div>
+  <div class="log" id="log"></div>
+ </div>
+
+ <details id="sm">
+  <summary>All products summary</summary>
+  <div class="chips" id="chips"><button data-f="all">All</button><button data-f="mis">Mismatch</button><button data-f="unc">Not counted</button></div>
+  <div class="tw"><table><thead><tr><th>Product</th><th>System</th><th>Physical</th><th>Diff</th></tr></thead><tbody id="tb"></tbody><tfoot id="tf"></tfoot></table></div>
+ </details>
+
+ <button class="xl" id="xl">⬇ Download Excel</button>
+ <div class="bar" id="bar"><span id="bt">All saved</span><button id="save">💾 Save</button></div>
 </div>
-<button class="fab hid" id="fab">🧮</button>
-<div class="calc" id="calc"><div class="ci">
-  <div class="ch"><b id="cn">Tap a product row to count it</b><button id="chide">Hide ▼</button></div>
-  <div class="disp"><div class="rv" id="rv"></div><div class="ex" id="ex">0</div></div>
-  <div class="kp" id="kp"></div>
-  <div class="acts"><button id="run">▶ Run (=)</button><button id="add">➕ Add to product</button><button class="alt" id="set">Set</button><button class="alt" id="undo">↶ Undo</button></div>
-</div></div>
+<div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-const DATA=[[21, "CSD", "1000 ML PET", "PEPSI", "1000 ML PET - PEPSI", 453.0], [22, "CSD", "1000 ML PET", "MIRINDA", "1000 ML PET - MIRINDA", 18.0], [23, "CSD", "1000 ML PET", "7-UP", "1000 ML PET - 7-UP", 305.0], [24, "CSD", "1000 ML PET", "M.DEW", "1000 ML PET - M.DEW", 1400.0], [62, "CSD", "1000 ML PET", "7UP MINT", "1000 ML PET - 7UP MINT", 0.0], [112, "Zero Sugar", "1000 ML PET", "7-UP ZERO", "1000 ML PET - 7-UP ZERO", 0.0], [129, "Water", "1000 ML PET-Revive", "LYCHEE BURST", "1000 ML PET-Revive - LYCHEE BURST", 43.0], [130, "Water", "1000 ML PET-Revive", "LEMONADE TWIST", "1000 ML PET-Revive - LEMONADE TWIST", 23.0], [93, "Slice Juices", "1000 ML Tetra Pack", "S-M-JUICE", "1000 ML Tetra Pack - S-M-JUICE", 56.0], [14, "CSD", "1500 ML PET", "PEPSI", "1500 ML PET - PEPSI", 999.0], [15, "CSD", "1500 ML PET", "MIRINDA", "1500 ML PET - MIRINDA", 15.0], [16, "CSD", "1500 ML PET", "7-UP", "1500 ML PET - 7-UP", 284.0], [17, "CSD", "1500 ML PET", "M.DEW", "1500 ML PET - M.DEW", 676.0], [114, "Zero Sugar", "1500 ML PET", "7-UP ZERO", "1500 ML PET - 7-UP ZERO", 0.0], [131, "CSD", "1500 ML PET", "7UP MINT", "1500 ML PET - 7UP MINT", 16.0], [94, "Water", "1500 ML PET AF", "Aquafina", "1500 ML PET AF - Aquafina", 2417.0], [84, "Slice Juices", "200 ML T.Pack", "S-M-JUICE", "200 ML T.Pack - S-M-JUICE", 339.0], [125, "CSD", "2000 ML PET 6BT", "PEPSI", "2000 ML PET 6BT - PEPSI", 78.0], [126, "CSD", "2000 ML PET 6BT", "M.DEW", "2000 ML PET 6BT - M.DEW", 407.0], [127, "CSD", "2000 ML PET 6BT", "7-UP", "2000 ML PET 6BT - 7-UP", 60.0], [82, "Slice Juices", "240 ML RB SLICE", "S-M-JUICE", "240 ML RB SLICE - S-M-JUICE", 86.0], [75, "Energy Drinks", "240 ML RB STING", "STING - BB", "240 ML RB STING - STING - BB", 538.0], [76, "Energy Drinks", "240 ML RB STING", "STING - GR", "240 ML RB STING - STING - GR", 0.0], [39, "CSD", "250 ML CAN", "MIRINDA", "250 ML CAN - MIRINDA", 15.0], [40, "CSD", "250 ML CAN", "7-UP", "250 ML CAN - 7-UP", 12.0], [41, "CSD", "250 ML CAN", "M.DEW", "250 ML CAN - M.DEW", 22.0], [43, "CSD", "250 ML CAN", "PEPSI", "250 ML CAN - PEPSI", 91.0], [103, "Zero Sugar", "250 ML CAN", "7-UP ZERO", "250 ML CAN - 7-UP ZERO", 16.0], [108, "Zero Sugar", "250 ML CAN", "PEPSI Zero", "250 ML CAN - PEPSI Zero", 0.0], [122, "CSD", "250 ML CAN", "7UP MINT", "250 ML CAN - 7UP MINT", 0.0], [80, "Energy Drinks", "250 ML CAN STING", "STING - BB", "250 ML CAN STING - STING - BB", 0.0], [1, "CSD", "250 ML RB", "PEPSI", "250 ML RB - PEPSI", 340.0], [2, "CSD", "250 ML RB", "MIRINDA", "250 ML RB - MIRINDA", 0.0], [4, "CSD", "250 ML RB", "7-UP", "250 ML RB - 7-UP", 268.0], [5, "CSD", "250 ML RB", "M.DEW", "250 ML RB - M.DEW", 1690.0], [128, "CSD", "250 ML RB", "7UP MINT", "250 ML RB - 7UP MINT", 0.0], [81, "Energy Drinks", "300 ML PET Sting", "STING - BB", "300 ML PET Sting - STING - BB", 274.0], [106, "Energy Drinks", "300 ML PET Sting", "STING - GR", "300 ML PET Sting - STING - GR", 0.0], [123, "Water", "300 ML PET-Revive", "LYCHEE BURST", "300 ML PET-Revive - LYCHEE BURST", 40.0], [124, "Water", "300 ML PET-Revive", "LEMONADE TWIST", "300 ML PET-Revive - LEMONADE TWIST", 0.0], [55, "CSD", "345 ML PET", "PEPSI", "345 ML PET - PEPSI", 680.0], [57, "CSD", "345 ML PET", "MIRINDA", "345 ML PET - MIRINDA", 0.0], [58, "CSD", "345 ML PET", "7-UP", "345 ML PET - 7-UP", 660.0], [59, "CSD", "345 ML PET", "M.DEW", "345 ML PET - M.DEW", 1611.0], [60, "CSD", "345 ML PET", "7UP MINT", "345 ML PET - 7UP MINT", 50.0], [115, "Zero Sugar", "345 ML PET", "7-UP ZERO", "345 ML PET - 7-UP ZERO", 16.0], [96, "Water", "5.0L PET Bottle Bulk Water", "Aquafina", "5.0L PET Bottle Bulk Water - Aquafina", 169.0], [27, "CSD", "500 ML PET", "PEPSI", "500 ML PET - PEPSI", 141.0], [28, "CSD", "500 ML PET", "MIRINDA", "500 ML PET - MIRINDA", 0.0], [29, "CSD", "500 ML PET", "7-UP", "500 ML PET - 7-UP", 145.0], [30, "CSD", "500 ML PET", "M.DEW", "500 ML PET - M.DEW", 152.0], [61, "CSD", "500 ML PET", "7UP MINT", "500 ML PET - 7UP MINT", 0.0], [116, "Zero Sugar", "500 ML PET", "7-UP ZERO", "500 ML PET - 7-UP ZERO", 0.0], [95, "Water", "500 ML PET AF", "Aquafina", "500 ML PET AF - Aquafina", 2967.0], [117, "Water", "500 ML PET GTR", "BLUE BOLT", "500 ML PET GTR - BLUE BOLT", 0.0], [118, "Water", "500 ML PET GTR", "LEMON & LIME", "500 ML PET GTR - LEMON & LIME", 0.0], [119, "Water", "500 ML PET GTR", "TROPICAL FRUIT", "500 ML PET GTR - TROPICAL FRUIT", 0.0], [120, "Water", "500 ML PET GTR", "MIX FLAVORS", "500 ML PET GTR - MIX FLAVORS", 0.0], [77, "Energy Drinks", "500 ML PET Sting", "STING - BB", "500 ML PET Sting - STING - BB", 1815.0], [78, "Energy Drinks", "500 ML PET Sting", "STING - GR", "500 ML PET Sting - STING - GR", 0.0]];
+const D={"dists":[[101041,"Mehar Munir Brother"],[100003,"Kashif Traders"],[101533,"Nouman Khan Traders"],[101425,"Mehar & Co"],[101526,"Hassan Trader"],[101830,"AL HAMAD TRADERS"],[101310,"Ateeq Traders"]],"prods":[[21,"1000 ML PET","PEPSI","CSD"],[22,"1000 ML PET","MIRINDA","CSD"],[23,"1000 ML PET","7-UP","CSD"],[24,"1000 ML PET","M.DEW","CSD"],[62,"1000 ML PET","7UP MINT","CSD"],[112,"1000 ML PET","7-UP ZERO","Zero Sugar"],[129,"1000 ML PET-Revive","LYCHEE BURST","Water"],[130,"1000 ML PET-Revive","LEMONADE TWIST","Water"],[93,"1000 ML Tetra Pack","S-M-JUICE","Slice Juices"],[14,"1500 ML PET","PEPSI","CSD"],[15,"1500 ML PET","MIRINDA","CSD"],[16,"1500 ML PET","7-UP","CSD"],[17,"1500 ML PET","M.DEW","CSD"],[114,"1500 ML PET","7-UP ZERO","Zero Sugar"],[131,"1500 ML PET","7UP MINT","CSD"],[94,"1500 ML PET AF","Aquafina","Water"],[84,"200 ML T.Pack","S-M-JUICE","Slice Juices"],[125,"2000 ML PET 6BT","PEPSI","CSD"],[126,"2000 ML PET 6BT","M.DEW","CSD"],[127,"2000 ML PET 6BT","7-UP","CSD"],[82,"240 ML RB SLICE","S-M-JUICE","Slice Juices"],[75,"240 ML RB STING","STING - BB","Energy Drinks"],[76,"240 ML RB STING","STING - GR","Energy Drinks"],[39,"250 ML CAN","MIRINDA","CSD"],[40,"250 ML CAN","7-UP","CSD"],[41,"250 ML CAN","M.DEW","CSD"],[43,"250 ML CAN","PEPSI","CSD"],[103,"250 ML CAN","7-UP ZERO","Zero Sugar"],[108,"250 ML CAN","PEPSI Zero","Zero Sugar"],[122,"250 ML CAN","7UP MINT","CSD"],[80,"250 ML CAN STING","STING - BB","Energy Drinks"],[1,"250 ML RB","PEPSI","CSD"],[2,"250 ML RB","MIRINDA","CSD"],[4,"250 ML RB","7-UP","CSD"],[5,"250 ML RB","M.DEW","CSD"],[128,"250 ML RB","7UP MINT","CSD"],[81,"300 ML PET Sting","STING - BB","Energy Drinks"],[106,"300 ML PET Sting","STING - GR","Energy Drinks"],[123,"300 ML PET-Revive","LYCHEE BURST","Water"],[124,"300 ML PET-Revive","LEMONADE TWIST","Water"],[55,"345 ML PET","PEPSI","CSD"],[57,"345 ML PET","MIRINDA","CSD"],[58,"345 ML PET","7-UP","CSD"],[59,"345 ML PET","M.DEW","CSD"],[60,"345 ML PET","7UP MINT","CSD"],[115,"345 ML PET","7-UP ZERO","Zero Sugar"],[96,"5.0L PET Bottle Bulk Water","Aquafina","Water"],[27,"500 ML PET","PEPSI","CSD"],[28,"500 ML PET","MIRINDA","CSD"],[29,"500 ML PET","7-UP","CSD"],[30,"500 ML PET","M.DEW","CSD"],[61,"500 ML PET","7UP MINT","CSD"],[116,"500 ML PET","7-UP ZERO","Zero Sugar"],[95,"500 ML PET AF","Aquafina","Water"],[117,"500 ML PET GTR","BLUE BOLT","Water"],[118,"500 ML PET GTR","LEMON & LIME","Water"],[119,"500 ML PET GTR","TROPICAL FRUIT","Water"],[120,"500 ML PET GTR","MIX FLAVORS","Water"],[77,"500 ML PET Sting","STING - BB","Energy Drinks"],[78,"500 ML PET Sting","STING - GR","Energy Drinks"]],"seed":{"101041":{"21":[277.3333,264.0],"22":[5.0,0.0],"23":[268.0,297.0],"24":[1220.8333,1200.0],"129":[23.0,0.0],"130":[43.0,0.0],"93":[46.0,52.0],"14":[859.8333,855.0],"15":[42.0,43.0],"16":[158.0,165.0],"17":[496.0,498.0],"131":[14.0,112.0],"94":[2233.0,2225.0],"84":[307.9583,347.0],"125":[42.0,39.0],"126":[341.0,320.0],"127":[55.0,58.0],"82":[0.0,20.0],"75":[454.7917,450.0],"39":[13.0,12.0],"40":[4.0,3.0],"41":[17.0,20.0],"43":[80.0,56.0],"103":[12.0,10.0],"1":[235.9167,254.0],"4":[219.0,277.0],"5":[1285.9167,1250.0],"81":[74.8333,78.0],"123":[39.0,32.0],"124":[197.0,198.0],"55":[482.8333,458.0],"57":[16.0,12.0],"58":[558.0,552.0],"59":[1354.3333,1298.0],"60":[39.0,27.0],"115":[26.0,14.0],"96":[153.0,146.0],"27":[72.0833,66.0],"28":[4.9167,4.0],"29":[138.4167,140.0],"30":[133.0,135.0],"61":[0.0833,0.0],"95":[2752.9167,2745.0],"118":[0.0833,0.0],"77":[1603.0,1595.0]}}};
 const $=id=>document.getElementById(id);
-const R=DATA.map(r=>({pid:r[0],cat:r[1],pkg:r[2],brand:r[3],pname:r[4],sys:r[5],phy:0,adds:[],t:0}));
-const fn=v=>Math.round(v*100)/100;
-let sel=null,expr='',tmr=null;
-try{const s=JSON.parse(localStorage.getItem('stk3')||'{}');R.forEach(r=>{const o=s[r.pid];if(o){r.phy=o.p||0;r.adds=o.a||[];r.t=o.t||0;}});}catch(e){}
-function save(msg){
-  try{const s={};R.forEach(r=>{if(r.t||r.phy)s[r.pid]={p:r.phy,a:r.adds,t:r.t};});localStorage.setItem('stk3',JSON.stringify(s));
-    const d=new Date();$('st').textContent=(msg||'Saved')+' ✓ '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');}
-  catch(e){$('st').textContent='Could not save on this device';}
-}
-const auto=()=>{clearTimeout(tmr);tmr=setTimeout(()=>save('Auto-saved'),400);};
-$('sv').onclick=()=>save('Saved');
+const rnd=n=>Math.round(n*10000)/10000;
+const fmt=n=>(Math.round(n*100)/100).toLocaleString('en-IN');
+const sum=a=>rnd(a.reduce((x,y)=>x+y,0));
+let flt='all',dist=D.dists[0][0],db=null,unsub=null,remote=false,cur={},dirty=new Set(),sel=null,expr='',saving=false;
+try{const x=localStorage.getItem('wzd_dist');if(x&&D.dists.some(d=>String(d[0])===x))dist=+x}catch(e){}
 
-function fill(sel,vals,all){sel.innerHTML='';[all,...vals].forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;sel.appendChild(o);});}
-fill($('fp'),R.map(r=>r.pname),'All products');
-fill($('fc'),[...new Set(R.map(r=>r.cat))],'All categories');
-function view(){
-  const p=$('fp').value,c=$('fc').value,q=$('q').value.toLowerCase().trim();
-  return R.filter(r=>(p==='All products'||r.pname===p)&&(c==='All categories'||r.cat===c)&&(!q||r.pname.toLowerCase().includes(q)));
+function toast(m){const t=$('toast');t.textContent=m;t.className='s';clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',2200)}
+function blank(){const o={};D.prods.forEach(p=>o[p[0]]={s:[],p:[]});return o}
+function seeded(){const o=blank(),sd={};for(const id in sd){if(sd[id][0])o[id].s=[sd[id][0]];if(sd[id][1])o[id].p=[sd[id][1]]}return o}
+function setSt(){const c=$('st');c.textContent=db?'☁️ Sync on':'📱 This device only'}
+
+function loadDist(){
+  if(unsub){unsub();unsub=null}
+  remote=false;dirty.clear();cur=seeded();
+  if(db){
+    unsub=db.doc('stock/d'+dist).onSnapshot(s=>{
+      if(s.exists){
+        remote=true;const e=(s.data()||{}).e||{};
+        D.prods.forEach(p=>{const id=p[0];if(dirty.has(id))return;const r=e['p'+id];cur[id]={s:(r&&r.s)||[],p:(r&&r.p)||[]}});
+      }
+      render();
+    },err=>{toast('Sync problem: '+(err&&err.code||''))});
+  }else{
+    try{const raw=localStorage.getItem('wzd_s_'+dist);if(raw){const o=JSON.parse(raw);D.prods.forEach(p=>{if(o[p[0]])cur[p[0]]=o[p[0]]})}}catch(e){}
+  }
+  render();
 }
-function stats(){
-  const v=view(),s=v.reduce((a,r)=>a+r.sys,0),p=v.reduce((a,r)=>a+r.phy,0),n=v.filter(r=>r.t).length;
-  $('sum').innerHTML='';
-  [['System',fn(s)],['Physical',fn(p)],['Difference',fn(s-p)],['Counted',n+'/'+v.length]].forEach(a=>{const d=document.createElement('div');d.textContent=a[0];const b=document.createElement('b');b.textContent=a[1];d.appendChild(b);$('sum').appendChild(d);});
+
+/* ---------- selection ---------- */
+function match(p,q,pk,br){return(!pk||p[1]===pk)&&(!br||p[2]===br)&&(!q||(p[2]+' '+p[1]+' '+p[3]+' '+p[0]).toLowerCase().includes(q))}
+function fill(el,first,vals,keep){
+  el.innerHTML='';const o=document.createElement('option');o.value='';o.textContent=first;el.appendChild(o);
+  vals.forEach(v=>{const x=document.createElement('option');x.value=v[0];x.textContent=v[1];el.appendChild(x)});
+  el.value=vals.some(v=>String(v[0])===String(keep))?keep:'';
 }
-function paint(r){
-  const e=r._e;if(!e)return;const d=fn(r.sys-r.phy);
-  e.df.textContent=d;e.df.className='df '+(d===0?'ok':'bad');
-  e.inp.className='ph'+(r.t?'':' z');
-  if(document.activeElement!==e.inp)e.inp.value=fn(r.phy);
-  e.row.classList.toggle('sel',sel===r);
+function buildFilters(){
+  const q=$('q').value.trim().toLowerCase(),pk=$('pack').value,br=$('brand').value;
+  const packs=[...new Set(D.prods.filter(p=>match(p,q,'',br)).map(p=>p[1]))];
+  const brands=[...new Set(D.prods.filter(p=>match(p,q,pk,'')).map(p=>p[2]))];
+  fill($('pack'),'All packs',packs.map(x=>[x,x]),pk);
+  fill($('brand'),'All brands',brands.map(x=>[x,x]),br);
+  const list=D.prods.filter(p=>match(p,q,$('pack').value,$('brand').value));
+  fill($('prod'),'— Select product ('+list.length+') —',list.map(p=>[p[0],p[1]+' – '+p[2]]),sel);
+  if(list.length===1)sel=list[0][0];
+  else if(!list.some(p=>p[0]===sel))sel=null;
+  $('prod').value=sel||'';
 }
-function pick(r){
-  sel=r;R.forEach(x=>x._e&&x._e.row.classList.toggle('sel',x===r));
-  $('cn').textContent=r.pname+'  ·  System '+fn(r.sys)+'  ·  Physical '+fn(r.phy);
+
+/* ---------- calculator ---------- */
+const KEYS=[['C','o'],['⌫','o'],['÷','o'],['×','o'],'7','8','9',['−','o'],'4','5','6',['+','o'],'1','2','3',['=','eq'],['0','w2'],'.','00'];
+function calc(){
+  let s=expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/[+\-*/.]+$/,'');
+  if(!s||!/^[0-9+\-*/. ]+$/.test(s))return null;
+  s=s.replace(/\s/g,'');
+  const t=s.match(/\d+\.?\d*|\.\d+|[+\-*\/]/g)||[];
+  if(t.join('')!==s)return null;
+  let i=0;
+  const num=()=>{let g=1;while(t[i]==='-'||t[i]==='+'){if(t[i]==='-')g=-g;i++}const v=parseFloat(t[i++]);return g*v};
+  const term=()=>{let v=num();while(t[i]==='*'||t[i]==='/'){const o=t[i++],r=num();v=o==='*'?v*r:v/r}return v};
+  let v=term();
+  while(i<t.length&&(t[i]==='+'||t[i]==='-')){const o=t[i++],r=term();v=o==='+'?v+r:v-r}
+  return(i>=t.length&&isFinite(v))?rnd(v):null;
 }
+function press(k){
+  if(k==='C')expr='';
+  else if(k==='⌫')expr=expr.slice(0,-1);
+  else if(k==='='){const v=calc();if(v!==null)expr=String(v)}
+  else{
+    if('+−×÷'.includes(k)){if(!expr&&k!=='−')return;if(/[+−×÷]$/.test(expr))expr=expr.slice(0,-1)}
+    expr+=k;
+  }
+  render();
+}
+function add(col){
+  if(!sel){toast('Select a product first');return}
+  const v=calc();
+  if(v===null||v===0){toast('Enter a valid number in the calculator');return}
+  cur[sel][col].push(v);dirty.add(sel);expr='';toast('Added '+fmt(v)+' to '+(col==='p'?'Physical':'System'));if(col==='p'&&$('auto').checked)move(1);else render();
+}
+function undo(col){
+  if(!sel||!cur[sel][col].length)return;
+  cur[sel][col].pop();dirty.add(sel);render();
+}
+
+/* ---------- save ---------- */
+async function save(){
+  if(!dirty.size||saving)return;
+  saving=true;const ids=[...dirty];
+  try{
+    if(db){
+      const ref=db.doc('stock/d'+dist),e={};
+      if(remote){ids.forEach(id=>e['p'+id]=cur[id]);await ref.update({e})}
+      else{D.prods.forEach(p=>e['p'+p[0]]=cur[p[0]]);await ref.set({e});remote=true}
+    }else{localStorage.setItem('wzd_s_'+dist,JSON.stringify(cur))}
+    ids.forEach(id=>dirty.delete(id));toast('Saved ✓');
+  }catch(err){toast('Save failed'+(err&&err.code?' ('+err.code+')':'')+' – please try again')}
+  saving=false;render();
+}
+
+/* ---------- render ---------- */
 function render(){
-  const l=$('list');l.innerHTML='';
-  view().forEach(r=>{
-    const row=document.createElement('div');row.className='r';
-    const a=document.createElement('div');const nm=document.createElement('div');nm.className='nm';nm.textContent=r.pname;
-    const mt=document.createElement('div');mt.className='mt';mt.textContent=r.cat+' · ID '+r.pid;a.append(nm,mt);
-    const sy=document.createElement('div');sy.className='sy';sy.textContent=fn(r.sys);
-    const inp=document.createElement('input');inp.type='number';inp.inputMode='decimal';inp.className='ph';
-    const df=document.createElement('div');
-    row.append(a,sy,inp,df);l.appendChild(row);
-    r._e={row,inp,df};paint(r);
-    row.onclick=()=>pick(r);
-    inp.onfocus=()=>pick(r);
-    inp.oninput=()=>{r.phy=inp.value===''?0:+inp.value;r.t=1;r.adds=[];paint(r);stats();auto();if(sel===r)pick(r);};
-    inp.onblur=()=>paint(r);
-  });
-  stats();
+  setSt();
+  buildFilters();
+  const P=D.prods.find(p=>p[0]===sel);
+  $('selname').textContent=P?P[1]+' – '+P[2]+'  ('+P[3]+')':'No product selected';
+  $('ex').textContent=expr||'0';
+  const v=calc();$('rs').textContent=v!==null&&/[+−×÷]/.test(expr.slice(1))?'= '+fmt(v):'';
+  const c=sel?cur[sel]:{s:[],p:[]};
+  const S=sum(c.s),Ph=sum(c.p),df=rnd(S-Ph);
+  $('vS').value=fmt(S);$('vP').value=fmt(Ph);$('vD').value=fmt(df);
+  $('vD').className=df===0?'z':'nz';
+  $('nS').textContent=c.s.length+' entries';$('nP').textContent=c.p.length+' entries';
+  $('uS').disabled=!c.s.length;$('uP').disabled=!c.p.length;
+  const ok=!!sel&&calc()!==null&&calc()!==0;
+  $('addS').disabled=!ok;$('addP').disabled=!ok;
+  $('log').textContent=sel?'System: '+(c.s.join(' + ')||'—')+'\nPhysical: '+(c.p.join(' + ')||'—'):'';
+  $('log').style.whiteSpace='normal';
+  const ch=(a,k)=>a.length?a.map((v,i)=>'<button class="en" data-c="'+k+'" data-i="'+i+'">'+fmt(v)+'</button>').join(''):'—';
+  $('log').innerHTML=sel?'<div>System: '+ch(c.s,'s')+'</div><div>Physical: '+ch(c.p,'p')+'</div><div class="hint">Columns are locked. To edit: tap an entry above, it moves into the calculator. Change it and press Add again (or press C to delete it).</div>':'';
+  const q=$('q').value.trim().toLowerCase();
+  let tS=0,tP=0,h='';
+  D.prods.forEach(p=>{const x=cur[p[0]],s=sum(x.s),ph=sum(x.p),d=rnd(s-ph);tS+=s;tP+=ph;
+    if(match(p,q,$('pack').value,$('brand').value)&&(flt==='all'||(flt==='mis'&&d!==0)||(flt==='unc'&&!x.p.length)))
+      h+='<tr class="cl'+(p[0]===sel?' on':'')+'" data-id="'+p[0]+'"><td>'+(!x.p.length?'⚪ ':d===0?'🟢 ':'🔴 ')+p[1]+' – '+p[2]+'</td><td>'+fmt(s)+'</td><td>'+fmt(ph)+'</td><td class="'+(d===0?'z':'nz')+'">'+fmt(d)+'</td></tr>'});
+  $('tb').innerHTML=h;
+  const gd=rnd(tS-tP);
+  $('tf').innerHTML='<tr><td>Grand Total</td><td>'+fmt(tS)+'</td><td>'+fmt(tP)+'</td><td class="'+(gd===0?'z':'nz')+'">'+fmt(gd)+'</td></tr>';
+  const n=dirty.size;$('bar').className='bar'+(n?' d':'');
+  $('bt').textContent=n?n+' product(s) with unsaved changes':'All saved';
+  $('save').disabled=!n||saving;
+  extra(tS,tP,gd);
 }
-['fp','fc'].forEach(i=>$(i).onchange=render);$('q').oninput=render;
-$('rs').onclick=()=>{if(!confirm('Set physical stock to 0 for all products?'))return;R.forEach(r=>{r.phy=0;r.adds=[];r.t=0;});save('Reset');render();};
-
-/* calculator */
-const KEYS=['C','⌫','(',')','7','8','9','÷','4','5','6','×','1','2','3','−','0','.','00','+'];
-KEYS.forEach(k=>{const b=document.createElement('button');b.textContent=k;if('÷×−+'.includes(k))b.className='op';if(k==='C'||k==='⌫')b.className='fn';b.onclick=()=>key(k);$('kp').appendChild(b);});
-function val(){
-  const e=expr.replace(/÷/g,'/').replace(/×/g,'*').replace(/−/g,'-').replace(/[+\-*/.]+$/,'').replace(/(^|[^0-9.])0+(?=\d)/g,'$1');
-  if(!e||!/^[0-9+\-*/.() ]+$/.test(e))return null;
-  try{const v=Function('"use strict";return ('+e+')')();return isFinite(v)?Math.round(v*10000)/10000:null;}catch(x){return null;}
+function extra(tS,tP,gd){
+  let cnt=0,mis=0;D.prods.forEach(p=>{const x=cur[p[0]];if(x.p.length){cnt++;if(rnd(sum(x.s)-sum(x.p))!==0)mis++}});
+  const N=D.prods.length,pc=Math.round(cnt/N*100);
+  $('kpi').innerHTML='<div class="k"><span>System</span><b>'+fmt(tS)+'</b></div><div class="k"><span>Physical</span><b>'+fmt(tP)+'</b></div><div class="k"><span>Difference</span><b class="'+(gd===0?'z':'nz')+'">'+fmt(gd)+'</b></div><div class="k"><span>Mismatch</span><b class="'+(mis?'nz':'z')+'">'+mis+'</b></div><div class="pg"><i style="width:'+pc+'%"></i></div><div class="pt">Counted '+cnt+' / '+N+' products ('+pc+'%)</div>';
+  document.querySelectorAll('#chips button').forEach(b=>b.className=b.dataset.f===flt?'on':'');
 }
-function show(){$('ex').textContent=expr||'0';const v=val();$('rv').textContent=(v!=null&&/[+\-*/÷×−]/.test(expr.slice(1)))?'= '+v:'';}
-function key(k){if(k==='C')expr='';else if(k==='⌫')expr=expr.slice(0,-1);else expr+=k;show();}
-$('run').onclick=()=>{const v=val();if(v!=null){expr=String(v);show();}};
-function need(){if(!sel){$('rv').textContent='Tap a product row first';return false;}return true;}
-$('add').onclick=()=>{const v=val();if(v==null||!need())return;sel.phy=Math.round((sel.phy+v)*10000)/10000;sel.adds.push(v);sel.t=1;expr='';paint(sel);stats();auto();pick(sel);show();$('rv').textContent='Added '+fn(v)+' → total '+fn(sel.phy);};
-$('set').onclick=()=>{const v=val();if(v==null||!need())return;sel.phy=v;sel.adds=[v];sel.t=1;expr='';paint(sel);stats();auto();pick(sel);show();$('rv').textContent='Set to '+fn(v);};
-$('undo').onclick=()=>{if(!need()||!sel.adds.length)return;const v=sel.adds.pop();sel.phy=Math.round((sel.phy-v)*10000)/10000;paint(sel);stats();auto();pick(sel);$('rv').textContent='Removed '+fn(v);};
-$('chide').onclick=()=>{$('calc').classList.add('hid');$('fab').classList.remove('hid');};
-$('fab').onclick=()=>{$('calc').classList.remove('hid');$('fab').classList.add('hid');};
+function move(k){
+  const q=$('q').value.trim().toLowerCase(),L=D.prods.filter(p=>match(p,q,$('pack').value,$('brand').value));
+  if(!L.length)return;let i=L.findIndex(p=>p[0]===sel);
+  i=i<0?(k>0?0:L.length-1):(i+k+L.length)%L.length;sel=L[i][0];render();
+}
 
-/* excel */
-async function dl(name,data){const d=await claude.use('downloads');
-  if(!d){$('st').textContent='Open this page in your browser to download';return;}
-  try{await d.save({filename:name,data});}catch(e){if(e.code!=='declined')$('st').textContent='Could not save file';}}
-$('dx').onclick=()=>{
-  save('Saved');
-  const H=['REGION_NAME','Unit','Dist_Code','Dist_Name','Product_Category','PKG_NAME','BRAND_NAME','PRODUCT_ID','PRODUCT_NAME','System Stock','Physical Stock','Difference'];
-  const a=[H,...R.map(r=>['Gujrat','Wazirabad',101041,'Mehar Munir Brother',r.cat,r.pkg,r.brand,r.pid,r.pname,r.sys,r.phy,''])];
-  const ws=XLSX.utils.aoa_to_sheet(a);
-  R.forEach((r,i)=>{ws['L'+(i+2)]={t:'n',f:'J'+(i+2)+'-K'+(i+2),v:r.sys-r.phy};});
-  const s=R.reduce((x,r)=>x+r.sys,0),p=R.reduce((x,r)=>x+r.phy,0);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([['Distributor','System Stock','Physical Stock','Difference'],['Mehar Munir Brother',s,p,s-p],['Grand Total',s,p,s-p]]),'Summary');
-  XLSX.utils.book_append_sheet(wb,ws,'Stock Report');
-  dl('Stock_Audit_'+new Date().toISOString().slice(0,10)+'.xlsx',new Blob([XLSX.write(wb,{type:'array',bookType:'xlsx'})]));
+/* ---------- wiring ---------- */
+fill($('dist'),'',D.dists.map(d=>[d[0],d[1]]),dist);$('dist').firstChild.remove();$('dist').value=dist;
+KEYS.forEach(k=>{const b=document.createElement('button');const t=Array.isArray(k)?k[0]:k;b.textContent=t;if(Array.isArray(k))b.className=k[1];b.onclick=()=>press(t);$('keys').appendChild(b)});
+$('dist').onchange=()=>{
+  if(dirty.size){$('dist').value=dist;toast('Save first, then change distributor');return}
+  dist=+$('dist').value;try{localStorage.setItem('wzd_dist',dist)}catch(e){}
+  sel=null;expr='';loadDist();
 };
-render();show();
+$('q').oninput=render;
+const pick=()=>{render();if(!sel)move(1);if($('pack').value||$('brand').value){$('auto').checked=true;$('sm').open=true}render()};
+$('pack').onchange=pick;$('brand').onchange=pick;
+$('log').onclick=e=>{const b=e.target.closest('.en');if(!b||!sel)return;expr=String(cur[sel][b.dataset.c].splice(+b.dataset.i,1)[0]);dirty.add(sel);toast('Edit the number, then press Add');render()};
+$('prod').onchange=()=>{sel=$('prod').value?+$('prod').value:null;render()};
+$('addS').onclick=()=>add('s');$('addP').onclick=()=>add('p');
+$('uS').onclick=()=>undo('s');$('uP').onclick=()=>undo('p');
+$('save').onclick=save;
+$('tb').onclick=e=>{const r=e.target.closest('tr');if(!r)return;sel=+r.dataset.id;$('q').value='';$('pack').value='';$('brand').value='';render();window.scrollTo({top:0,behavior:'smooth'})};
+window.addEventListener('beforeunload',e=>{if(dirty.size){e.preventDefault();e.returnValue=''}});
+let dl=null;
+async function exportXlsx(){
+  if(!window.XLSX){toast('Excel library did not load');return}
+  if(!dl){toast('Download not available here');return}
+  const dn=(D.dists.find(d=>d[0]===dist)||[])[1]||'';
+  const rows=[['REGION_NAME','Unit','Dist_Code','Dist_Name','Product_Category','PKG_NAME','BRAND_NAME','PRODUCT_ID','PRODUCT_NAME','System Stock','Physical Stock','Difference']];
+  let tS=0,tP=0;
+  D.prods.forEach(p=>{const x=cur[p[0]],s=sum(x.s),ph=sum(x.p);tS+=s;tP+=ph;rows.push(['Gujrat','Wazirabad',dist,dn,p[3],p[1],p[2],p[0],p[1]+' - '+p[2],s,ph,null])});
+  const ws=XLSX.utils.aoa_to_sheet(rows),n=rows.length,t=n+1;
+  for(let i=2;i<=n;i++)ws['L'+i]={t:'n',f:'J'+i+'-K'+i,v:rnd(rows[i-1][9]-rows[i-1][10])};
+  ws['A'+t]={t:'s',v:'Grand Total'};
+  ws['J'+t]={t:'n',f:'SUM(J2:J'+n+')',v:rnd(tS)};
+  ws['K'+t]={t:'n',f:'SUM(K2:K'+n+')',v:rnd(tP)};
+  ws['L'+t]={t:'n',f:'J'+t+'-K'+t,v:rnd(tS-tP)};
+  ws['!ref']='A1:L'+t;
+  ws['!cols']=[10,11,10,22,16,22,16,11,38,13,14,11].map(w=>({wch:w}));
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Stock Report');
+  const buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  const name='Stock_Report_'+dn.replace(/[^A-Za-z0-9]+/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  try{await dl.save({filename:name,data:buf});toast('Excel downloaded ✓')}
+  catch(err){if(!err||err.code!=='declined')toast('Download failed'+(err&&err.code?' ('+err.code+')':''))}
+}
+$('xl').onclick=exportXlsx;
+$('pv').onclick=()=>move(-1);$('nx').onclick=()=>move(1);
+$('chips').onclick=e=>{const b=e.target.closest('button');if(b){flt=b.dataset.f;render()}};
+document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)||e.ctrlKey||e.metaKey||e.altKey)return;
+  const k=e.key,m={'*':'×','/':'÷','-':'−'};
+  if(/^[0-9.+]$/.test(k)||m[k]){e.preventDefault();press(m[k]||k)}
+  else if(k==='Enter'||k==='=')press('=');
+  else if(k==='Backspace')press('⌫');else if(k==='Escape')press('C');
+  else if(k==='s'||k==='S')add('s');else if(k==='p'||k==='P')add('p');
+});
+loadDist();
+(async()=>{try{dl=await claude.use('downloads');if(!dl)$('xl').hidden=true}catch(e){$('xl').hidden=true}})();
+(async()=>{try{if(window.claude&&claude.use){db=await claude.use('db');if(db)loadDist();else setSt()}}catch(e){db=null;setSt()}})();
 </script>
 </body>
 </html>
